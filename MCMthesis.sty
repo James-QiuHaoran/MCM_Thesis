@@ -1,0 +1,247 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MCM Contest Report Template
+%% Template by latexstudio, <latexstudio@hotmail.com>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ----- version 5.01-L, modified by Liam Huang -----
+% ----- Welcome to my site: http://liam0205.me -----
+
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\ProvidesPackage{MCMthesis}[2014/01/28 v5.01-L MCM thesis]
+\typeout{MCMthesis for MCM Version 5.01-L}
+\def\MCMversion{v 5.01-L}
+
+% ----- Options Declaration -----
+\RequirePackage{kvoptions}
+\RequirePackage{etoolbox}
+\SetupKeyvalOptions{family=MCM, prefix=MCM@opt@, setkeys=\kvsetkeys}
+\newcommand{\skv}[1]{\kvsetkeys{MCM}{#1}}
+% ----- summary sheet or not
+\DeclareBoolOption[true]{sheet}
+\DeclareComplementaryOption{nosheet}{sheet}
+% ----- abstract or not
+\DeclareBoolOption[true]{abstract}
+\DeclareComplementaryOption{noabstract}{abstract}
+% ----- MCM Control Number
+\DeclareStringOption[71053]{tcn}[71053]
+% ----- Default Options
+\DeclareDefaultOption{\relax}
+% ----- Processing
+\ProcessKeyvalOptions*\relax
+
+% ----- Handle Options -----
+\newcommand{\control}{\MCM@opt@tcn}
+\newcommand{\team}{Team \#\ \MCM@opt@tcn}
+
+% ----- Loading Packages -----
+\RequirePackage{fancyhdr,fancybox}        % personalize page header
+\RequirePackage{ifthen}                   % logic options
+\RequirePackage{lastpage}                 % refer to the number of last page
+\RequirePackage{listings}                 % format source code
+\RequirePackage[toc,page,title,titletoc,header]
+              {appendix}                  % Appendix
+\RequirePackage{paralist}
+\RequirePackage{amsthm,amsfonts}
+\RequirePackage{amsmath,bm}               % AMSLaTeX
+\RequirePackage{amssymb,mathrsfs}         % AMSLaTeX sym-bols
+\RequirePackage{latexsym} 
+\RequirePackage{longtable,multirow,
+              hhline,tabularx,array}      % tables
+\RequirePackage{flafter}
+\RequirePackage{pifont,calc}
+\RequirePackage{colortbl,booktabs}
+\RequirePackage{geometry}                 % page layout
+\RequirePackage[T1]{fontenc}
+\RequirePackage[scaled]{berasans}
+\RequirePackage{hyperref}                 % hyper referance
+
+% ----- page layout -----
+\geometry{a4paper, margin = 2.5cm}
+
+% ----- handle driver -----
+\RequirePackage{ifpdf, ifxetex}
+
+% ----- hyperref setup -----
+\ifpdf
+  \hypersetup{hidelinks}
+\else
+  \ifxetex
+    \hypersetup{hidelinks}
+  \else
+    \hypersetup{dvipdfm, hidelinks}
+  \fi
+\fi
+
+% ----- graphics -----
+\ifpdf
+  \RequirePackage{graphicx}
+  \RequirePackage{epstopdf}
+\else
+  \ifxetex
+    \RequirePackage{graphicx}
+  \else
+    \RequirePackage[dvipdfmx]{graphicx}
+    \RequirePackage{bmpsize}
+  \fi
+\fi
+
+% ----- define color(s) -----
+\RequirePackage{xcolor}
+\definecolor{grey}{rgb}{0.91,0.91,0.91}
+
+%define the table of contents
+\renewcommand\tableofcontents{%
+    \centerline{\normalfont\Large\bfseries\contentsname
+        \@mkboth{%
+           \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
+    \vskip 5ex%
+    \@starttoc{toc}%
+    }
+% style: float counter
+\setcounter{totalnumber}{6}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{3}
+%很多人发现缺省的浮动参数过于严格了。下面的命令
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.65}
+\renewcommand{\floatpagefraction}{0.60}
+%将浮动参数重新设置为更宽松的值。---选自《Using Import graphics in LATEX2e》
+\def\@maketitle{%
+  \ifMCM@opt@sheet%
+  \makesheet%
+  \fi
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+  \let \footnote \thanks
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\large
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 1em%
+    {\large \@date}%
+  \end{center}%
+  \par
+  \vskip 1.5em%
+  \ifMCM@opt@abstract%
+  \make@abstract%
+  \fi%
+}
+\def\keywordsname{\bfseries Key Words:}
+\def\@abstract{}%
+\newbox\@abstract%
+\setbox\@abstract\hbox{}%
+\long\def\abstract{\bgroup\global\setbox\@abstract\vbox\bgroup\hsize\textwidth\leftskip1cm\rightskip1cm}%
+%\ifMCM@opt@sheet\fontfamily{fvs}\fontseries{m}\selectfont\fi}
+\def\endabstract{\egroup\egroup}
+\newbox\@keywords
+\setbox\@keywords\hbox{}
+\def\keywords{\bgroup\global\setbox\@keywords\vbox\bgroup\noindent\leftskip0cm}
+\def\endkeywords{\egroup\egroup}%
+\def\make@abstract{%
+\par%
+\centerline{\bfseries\abstractname}\vskip5pt\par%
+\noindent\usebox\@abstract\par%
+\noindent\hskip1cm\keywordsname\ \usebox\@keywords%
+\vskip10pt%
+}
+
+% style: table & figure caption font size and face
+\renewcommand{\figurename}{Figure}
+\renewcommand{\tablename}{Table}
+
+% style: table vertical merged cells
+\newcommand{\thline}{\hline\par\hline\par\hline}
+
+% style: figure include path
+\graphicspath{{./}{./img/}{./fig/}{./image/}{./figure/}{./picture/}%
+            {./imgs/}{./figs/}{./images/}{./figures/}{./pictures/}}
+
+%define the the bibliography like MCM collenction
+\newtheorem{Theorem}{Theorem}[section]%
+\newtheorem{Lemma}[Theorem]{Lemma}%
+\newtheorem{Corollary}[Theorem]{Corollary}%
+\newtheorem{Proposition}[Theorem]{Proposition}%
+\newtheorem{Definition}[Theorem]{Definition}%
+\newtheorem{Example}[Theorem]{Example}%
+% style: list typesetting
+\definecolor{grey}{rgb}{0.8,0.8,0.8}
+\definecolor{darkgreen}{rgb}{0,0.3,0}
+\definecolor{darkblue}{rgb}{0,0,0.3}
+\def\lstbasicfont{\fontfamily{pcr}\selectfont\footnotesize}
+\lstset{%
+% indexing
+   % numbers=left,
+   % numberstyle=\small,%
+% character display
+    showstringspaces=false,
+    showspaces=false,%
+    tabsize=4,%
+% style
+    frame=lines,%
+    basicstyle={\footnotesize\lstbasicfont},%
+    keywordstyle=\color{darkblue}\bfseries,%
+    identifierstyle=,%
+    commentstyle=\color{darkgreen},%\itshape,%
+    stringstyle=\color{black}%
+}
+\lstloadlanguages{C,C++,Java,Matlab,Mathematica}
+
+% style: COMAP required header
+\setcounter{page}{1}
+\pagestyle{fancy}
+\lhead{\small \team}
+\chead{}
+\rhead{\small Page \thepage\ of \pageref{LastPage}}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+
+
+\newcommand{\@problem}[1]{}
+\newcommand{\problem}[1]{\gdef\@problem{#1}}
+\def\makesheet{%
+  \null%
+  \vskip 3em%
+  \begingroup\fontfamily{fvs}\fontseries{m}\selectfont%
+  \thispagestyle{empty}%
+  \noindent\begin{tabularx}{0.3\textwidth}{lX}%
+  \multicolumn{2}{l}{For office use only}\\
+    T1&\rule{3cm}{0.5pt}\\
+    T2&\rule{3cm}{0.5pt}\\
+    T3&\rule{3cm}{0.5pt}\\
+    T4&\rule{3cm}{0.5pt}\\
+    \end{tabularx}\hspace{\fill}
+    \begin{minipage}{0.33\textwidth}
+    \centering
+    Team Control Number\\[10pt]
+    {\fontsize{38pt}{25pt}\selectfont  \textbf{\MCM@opt@tcn} }\normalsize\\[10pt]
+    Problem Chosen\\[10pt]
+    {\fontsize{20pt}{\baselineskip}\selectfont \textbf{\@problem}}\normalsize\\
+    \end{minipage}\hspace{\fill}
+    \begin{tabularx}{0.28\textwidth}{lX}%
+    \multicolumn{2}{l}{For office use only}\\
+    F1&\rule{3cm}{0.5pt}\\
+    F2&\rule{3cm}{0.5pt}\\
+    F3&\rule{3cm}{0.5pt}\\
+    F4&\rule{3cm}{0.5pt}\\
+    \end{tabularx}
+
+%\vspace*{-1em}
+\noindent\rule{\textwidth}{0.5pt}%
+ 
+\begin{center}
+  \textbf{\the\year\  Mathematical Contest in Modeling (MCM) Summary Sheet}\\
+(Attach a copy of this page to each copy of your solution paper.)
+\end{center}
+\par%
+\vskip 1.5em%
+\centerline{\large\bfseries\abstractname}
+\noindent\usebox\@abstract%
+\endgroup}
+
+\endinput

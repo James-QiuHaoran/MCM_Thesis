@@ -1,0 +1,57 @@
+\documentclass[a4paper, 11pt]{article}
+% ----- Loading the Package MCMthesis -----
+% -----           v 5.01-L            -----
+% `tcn' is short for `Team Control Number'.
+% The option `sheet' contorls weather the summary sheet
+% will appear.
+% The option `abstract' controls weather the abstract 
+% will appear in the title-page.
+\usepackage[tcn = 71053, sheet = true, abstract = true]{MCMthesis}
+% ----- Question Mark -----
+\problem{B}
+% ----- Fonts settings -----
+% You may need to install the font files, if it's needed.
+% Disable it, if you don't want this font.
+\usepackage{palatino}
+% ----- Set the skip betweent the paragraphics -----
+\setlength\parskip{.5\baselineskip}
+% ----- The name of Abstract ------
+\providecommand{\abstractname}{\relax} % <-- Do not modify here.
+\renewcommand{\abstractname}{Abstract} % <-- Modify here, if needed.
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{amsmath}
+% -----------------------------------
+% ===== The Title of Your Paper =====
+% -----------------------------------
+\title{Queuing Model of Fan-in Area For Merging After Toll}
+% ---------------------------------------
+% ===== The Author(s) of Your Paper =====
+% ---------------------------------------
+\author{Team \#71053}
+% ----------------
+% ===== Time =====
+% ----------------
+\date{January 23, 2017}
+\begin{document}
+
+\begin{abstract}
+Content of our abstract.
+
+\begin{keywords}
+keyword1; keyword2; keyword3; keyword4
+\end{keywords}
+
+\end{abstract}
+
+\maketitle
+\pagestyle{empty}
+\newpage
+% Generate the Table of Contents
+\tableofcontents
+
+% \newpage
+\pagestyle{fancy}
+% The body of your paper
+\input{body.tex}
+\end{document}
+% ----- End of Document Body -----
