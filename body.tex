@@ -144,7 +144,7 @@ When \(B \equiv L+1\mod 2\), the two sides are not symmetric. We may first consi
 \\
 There is still one merge point that will merge the (L+1) lanes to L lanes. So at this point, the arrival rate is\\ 
 \[
-\lambda = \frac{B-(L+1)+1}{B} \times \phi \times \frac{B+1}{B}
+\lambda = \frac{B-(L+1)+1+1}{B} \times \phi
 \]
 
 \section{Calculating and Simplifying the Model}
@@ -153,9 +153,9 @@ There is still one merge point that will merge the (L+1) lanes to L lanes. So at
 \item Total Traffic Flow($\phi$). According to the Institute of Transportation Engineers[4], the maximum traffic flow of one lane is 2000/hour. Light and heavy traffic condition have different value of $\phi$. In New Jersey, the number of vehicles per lane per hour is 1300[5].
 \item Service Rate at the Merging Point:
 \begin{itemize}
-\item No other cars: $\mu_{a}$. Since after getting into the highway, vehicles should speed up to at least 40 km/h. By average car parameters, we estimate the acceleration as $2m/s^2$. The duration is approximately 1.67 seconds.\\
+\item No other cars: $\mu_{a}$. Since after getting into the highway, vehicles should speed up to at least 40 km/h. To prevent accident, the distance between two vehicles should be long enough. According two the two-second-rule, after the former vehicle passes one point, there would be at least 2 seconds for the second vehicle to pass that point. Thus we estimate the duration when one vehicle pass a merge point as approximately 2 seconds.\\
 \[
-\mu_{a} = \frac{3600}{1.67 s} = 2160/hr
+\mu_{a} = \frac{3600}{2.0 s} = 1800/hr
 \]
 \item Merging Needed: $\mu_{b}$. To estimate the service rate when merging needed, we use the similar approach. Assume the merging occurs safely and efficiently, then the distance between two vehicles tends to be the safety distance, which is the length of the vehicle(speed is low in this scenario). From NJTA, 96\% of vehicles are cars and 4\% are trunks and buses, so we estimate the size of the car as 4.5 meters[5]. Therefore the average service time is approximately 3 seconds.\\
 \[
@@ -165,27 +165,141 @@ There is still one merge point that will merge the (L+1) lanes to L lanes. So at
 \end{itemize}
 
 \subsection{Wasting Time(W)}
-\subsection{Construction Cost(C)}
+Since the movement of thousands of vehicles and the merging process is random, and the future of the process could be predicted given the condition of the process now. In other words, the future state of the process could be independent of states at the past. Therefore, in our model, we view the merging process as a Markov process and merging points as Markov systems.[6]\\
+\\
+At any merging point, the state of the system is measured by the number of vehicles in the system. Here, we use $\Lambda$ to represent the arrival rate. For any vehicle coming to the merging point, if there is no vehicle ahead of it the service rate would be $\mu_{a}$ and $\mu_{b}$ otherwise as we assumed and calculated before. Let $P_{0}, P_{1}, P_{2}, ... , P_{n}$ represent the possibility for the system to contain 0, 1, 2, ..., n vehicles. The average wasting time would be calculated after the system reach the equilibrium, i.e. all state would possess a certain possibility.\\
+\\
+Under the conditions that[7]\\
+\begin{itemize}
+\item all states of the Markov chain communicate with each other (i.e., it is possible to go from each state, possibly in more than one step, to every state);
+\item the Markov chain is not periodic (a periodic Markov chain is a chain in which, e.g., you can only return to a state in an even number of steps);
+\item the Markov chain does not drift away to infinity,
+\end{itemize}
+For a merging point, when the system has no vehicle, there would be $\Lambda P_{0}$ vehicles coming into the system to make the state change from possessing 0 vehicle to possessing 1 vehicle and $\mu_{a} P_{1}$ vehicles getting out of the system to make the state change from possessing 1 vehicle to possessing 0 vehicles. At equilibrium, we have\\
+\[
+P_{0}\Lambda = P_{1} \mu_{a}
+\]
+When the system has 1 vehicle, besides its interaction with the system of state of possessing 0 vehicle, there would be $\Lambda P_{1}$ vehicles coming into the system to make the state change from possessing 1 vehicle to possessing 2 vehicles and $\mu_{b} P_{2}$ vehicles getting out of the system to make the state change from possessing 2 vehicles to possessing 1 vehicles. At equilibrium, we have\\
+\[
+P_{0}\Lambda + P_{2}\mu_{b} = P_{1} \mu_{b} + P_{1} \Lambda
+\]
+Likewise, when there is n vehicles($n \geqslant 2$) in the system, we have\\
+\[
+P_{n-1}\Lambda + P_{n+1}\mu_{b} = P_{n} \mu_{b} + P_{n} \Lambda
+\]
+at the equilibrium. Besides summation property of possibility $P_{0} + P_{1} + P_{2} + \cdots + P_{n} = 1$, we obtain\\
+\begin{empheq}[left=\empheqlbrace]{align}
+P_{0} = (1 + \frac{\Lambda}{\mu_{a}} + \frac{2\mu_{b}\Lambda^2}{\mu_{a}(\mu_{a}+\Lambda)(\mu_{b}-\Lambda)})^{-1}\\
+P_{1} = \frac{\Lambda}{\mu_{a}}\cdot P_{0}\\
+P_{n} = \frac{2\Lambda^2}{\mu_{a}(\mu_{a}+\Lambda)} \cdot \frac{\Lambda}{\mu_{b}^{-2}}\cdot P_{0}, n \geqslant 2
+\end{empheq}
+\noindent
+\\
+Therefore, the average wasting time at a particular merging point could be calculated given the arrival rate and expected number of vehicles.
+\[
+w(\Lambda) = \lim_{n\to\infty} \frac{\sum_{i=0}^{n} iP_{i}}{\Lambda}
+\]
+With the knowledge of arrival rate $\lambda$ of each merging point and the possibility of reaching a merging point($\frac{\lambda}{\phi}$) calculated in section 4, the total average wasting time at all merging points is
+\[
+W = \sum_{i=1}^{B-L} \frac{i+1}{B} \times w(\frac{i+1}{B}\cdot\phi)
+\]
 
-%============== Result of the model =====================
-\section{The Model Results}
+% Here we need to add a graph to show the average wasting time
+% L = 1, mu_a = 2160/hr, mu_b = 1200/hr
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=12cm]{wasting_time.png}
+\caption{Average Wasting Time When L = 2} \label{fig: Average Wasting Time when L = 2}
+\end{figure}
+
+\subsection{Construction Cost(C)}
+The construction and maintenance fee of highway road is expensive, to minimize the cost, the government should build optimal and suitable roads. In this section, we will see how much the model cost. According to NJDOT, it costs about 335.7 USD per square meter to construct, maintain and administer the highway.[8]\\
+\\
+In our model, the merging process is going on at the same time on the two sides. At each merge point, there is a piece of "merging area" shown in figure 4. There would be totally $B-L$ merging area in the model. If $B-L$ is even number as the figure shows, there would be $\frac{B-L}{2}$ pairs of merging area. Otherwise, there would be $\frac{B-L-1}{2}$ pairs with one isolated merging areas.\\
+
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=12cm]{Merging_Area.png}
+\caption{Merging Area} \label{fig: Merging Area}
+\end{figure}
+\noindent
+At each merging area, the distance should be at least safety distance, which is 6 times car size. As we estimated before, the distance D is $6\times 4.5 = 27$ meters. Practically, the triangle part of merging area is at least the size of one vehicle which is 4.5 meters. The width of a traffic lane is 3.7 meters. Thus the area of one merging area is 108.225 $m^2$. If there are B tollbooths and L traffic lanes, the total cost would be\\
+\[
+C = [\ceil {\frac{B-L}{2}} \times L \times D \times 3.7 + (B-L)\times 108.225]\times 335.7
+\]
+\noindent
+When L equals 2, the cost function of B is shown in figure 5.
+% Add a figure to show the cost-B growth
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=12cm]{cost.png}
+\caption{Highway Cost When L = 2} \label{fig: Highway Cost when L = 2}
+\end{figure}
 
 %========== 模型的实效分析（适应性说明）======================
-\section{Validating the Model} 
+\section{Validating the Model}
+In this section, we will see how some certain factors affect our model.
 
-\section{Conclusions}
+\subsection{Light or Heavy Traffic}
+In previous part, what we considered is under average traffic flow. What would our model behaves and give to us under various traffic condition? For instance, let us see Asbury Park Toll Plaza - Garden State Parkway whose B equals 4 and L equals 2. Below is the figure showing the change of wasting time with the change of traffic flow.\\
+
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=12cm]{phi.png}
+\caption{Average Wasting Time With Traffic Flow Changing} \label{fig: Average Wasting Time With Traffic Flow Changing}
+\end{figure}
+\noindent
+From the figure, we see that the average wasting time during merging decreases slightly from 10.15$\times 10^{-3}$ to 9.3$\times 10^{-3}$ as traffic flow $\phi$ increases from 200 to 1800 per hour, which shows that if the traffic flow is in a reasonable range, it would not be a great effect on wasting time.
+
+\subsection{Autonomous Vehicles}
+Autonomous vehicles are more and more mature these years, new technologies make it safer, faster and more agile than human drivers. First, they may reduce the number of accidents caused by human error, such as being distracted and fatigue driving. Also, they can sense the environment rapidly and accurately with broad range of sensors, also, advanced GPS and operation-computing technology allow it to make accurate reactions to various environments.[9] Thus, the reaction time is reduced and the safety distance is also shorter than human drivers with the same velocity. That is to say, they require a higher speed limitation than human drivers.\\
+\\
+With a shorter reaction time, $\mu_{b}$ is smaller for the autonomous vehicles since it is the time for a car to drive through the merging area from the speed of 0. The difference between reaction time of human driver and automatic vehicle is roughly 0.2 second, which is obtained by estimation. Therefore, for autonomous vehicles,\\
+\[
+\mu_{c} = \frac{3600}{\frac{3600}{\mu_{b}} - 0.2} \approx 1300
+\]
+Meanwhile, $\mu_{a}$ remains the same since it is the time for a car to drive through the merging area at the average highway speed. The merging area and average speed are same for all vehicles, so $\mu_{a}$ remains unchanged.\\
+\\
+In a word, the autonomous vehicles only affect $\mu_{b}$. We set the proportion of the autonomous vehicle to be $a$, then the new service rate at merging point when merging occurs is\\
+\[
+\mu_{b}\prime = a\cdot\mu_{c} + (1-a)\cdot\mu_{b} = 100\cdot a + 1200
+\]
+When L equals 2 and B equals 4, the average wasting time changes with the proportion $a$ as\\
+\begin{figure}[h]
+\small
+\centering
+\includegraphics[width=12cm]{avg_sd.png}
+\caption{Average Wasting Time With Self-Driving Vehicles Considered When L = 2, B = 4} \label{fig: Average Wasting Time With Self-Driving Vehicles Considered When L = 2, B = 4}
+\end{figure}
+
+\subsection{Conventional, Automated or Electronic Tollbooths}
+There are various ways to collect toll in real life. Exact-change tollbooths and electronic toll collection (ETC) are also widely used other than the conventional manual tollbooths. These toll collection methods are all widely used. According to New Jersey Turnpike Authority, the usage of E-ZPass, the name of their ETC system, has reached 80.0\% in 2014, and remain slightly increasing.[10]\\
+\\
+The service rate of these three categories are different. We first define that the service rate of conventional manual tollbooth is the number of vehicles passing through the tollbooth in a unit time period, denoted by $\theta_{1}$(We estimate it as 350 per hour). Similarly, we also define the service rate of exact-change tollbooths $\theta_{2}$, the service rate of ETC $\theta_{3}$.\\
+\\
+According to NJTA design manual, the size of the tollbooths is around 40 feet[11]. We estimate the speed passing through the ETC to be 10 miles per hour. Therefore, we conclude that\\
+\[
+\theta_{3} = \frac{3600s}{40feet/10mph} = 1302/hour
+\]
+The service time of exact-change tolling is around a half of conventional manual tolling, the speed limit is the same as the speed going through ETC. Thus for exact-change tolling,\\
+\[
+\theta_{2} = \frac{3600s}{\frac{1}{2}(\frac{3600s}{\theta_{2}}-\frac{1}{\theta_{3}})+\frac{1}{\theta_{3}}} = 550 /hour
+\]
+Since service rate mainly affects the traffic flow of each tollbooths, $\phi$ is the only parameter that will be changed with the category of tolling methods.
 
 %============ 总体评价 ====================================
 \section{Evaluation: Strengths and weaknesses}
-Like any model,the one present above has its strengths and
-weaknesses. Some of the major points are presented below.
+Like any model, our model presented above has its strengths and weaknesses. Some of the major points are presented below.
 
 \subsection{Strengths}
-\begin{itemize}
-\item \textbf{Applies widely}
-\end{itemize}
 
 \subsection{Weakness}
+
+\section{Conclusions}
 
 \begin{thebibliography}{99}
 \raggedright
@@ -194,4 +308,10 @@ weaknesses. Some of the major points are presented below.
 \bibitem{3} Burke's Theorem and Networks of Queues. M.I.T. Retrieved from https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-263j-data-communication-networks-fall-2002/lecture-notes/Lecture7.pdf
 \bibitem{4} Institute of Transportation Engineers, Traffic Engineering Handbook, Ed. James L. Pline, Prentice Hall, Englewood Cliffs, NJ, 1992.
 \bibitem{5} Road User Cost Manual. New Jersey Turnpike Authority. Retrieved from http://www.state.nj.us/turnpike/documents/NJTA\%20Road\%20User\%20Cost\%20Manual.pdf
+\bibitem{6} Markov Chains. James. N. Cambridge. Retrieved from http://u.math.biu.ac.il/~amirgi/CLN.pdf
+\bibitem{7} Markov Chain and Markov Process. Retrieved from http://www.win.tue.nl/~iadan/sdp/h3.pdf
+\bibitem{8} The Cost of Roadway Construction, Operations and Maintenance in New Jersey. 2016. Jon Carnegie, AICP/PP. Retrieved from http://www.state.nj.us/transportation/refdata/research/reports/NJ-2016-003.pdf
+\bibitem{9} Self-Driving Car Technology’s Benefits, Potential Risks, and Solutions. 2014. John. M. Retrieved from $http://www.theenergycollective.com/jemiller_ep/464721/self-driving-car-technology-s-benefits-potential-risks-and-solutions$
+\bibitem{10} E-ZPASS Usage. New Jersey Main Customer Service Center. Retrieved from $https://www.ezpassnj.com/en/about/i_guide.pdf$
+\bibitem{11} Section 11: Facility Building and Toll Plaza. NJTA. Retrieved from http://www.state.nj.us/turnpike/documents/NJTA-DM-Section-11-Facility-Buildings-Toll-Plazas.pdf
 \end{thebibliography}
