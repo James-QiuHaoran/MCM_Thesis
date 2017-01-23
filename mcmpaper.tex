@@ -19,11 +19,17 @@
 \providecommand{\abstractname}{\relax} % <-- Do not modify here.
 \renewcommand{\abstractname}{Abstract} % <-- Modify here, if needed.
 \usepackage[nottoc,numbib]{tocbibind}
-\usepackage{amsmath}
+\usepackage{amsmath, empheq}
+\usepackage{xparse}
+\NewDocumentCommand{\ceil}{s O{} m}{%
+  \IfBooleanTF{#1} % starred
+    {\left\lceil#3\right\rceil} % \ceil*[..]{..}
+    {#2\lceil#3#2\rceil} % \ceil[..]{..}
+}
 % -----------------------------------
 % ===== The Title of Your Paper =====
 % -----------------------------------
-\title{Queuing Model of Fan-in Area For Merging After Toll}
+\title{Merging Process After Toll Under Markov Queueing Model}
 % ---------------------------------------
 % ===== The Author(s) of Your Paper =====
 % ---------------------------------------
@@ -35,10 +41,10 @@
 \begin{document}
 
 \begin{abstract}
-Content of our abstract.
+Tollbooths are most common construction on the highway all over the world, which are set to financing for the construction and maintenance of highways. However, they takes passengers unexpected wasting time to stop and wait especially when there is traffic congestion. In order to minimize the wasting time of travelers and optimize construction cost for the turnpike, we build this model with considering the shape, size of merging area and merging pattern. Before merging, Queuing Theory is used to simulate traffic flow in each lane. In our model, symmetric shape allows the merging process occur from both two sides, which could be more efficient and may cost lest construction fee. The size of each merging area is calculated by safe distance with accident prevention and merging pattern is depicted by using Markov Process divided into two scenarios. Then we evaluate its performance from several perspectives(traffic condition, self-driving vehicles and toll types).  With ETC considered, our model shows putting ETC in the middle of the plaza tends to be better than other kinds of layout.
 
 \begin{keywords}
-keyword1; keyword2; keyword3; keyword4
+Merging after Toll; Queuing Theory; Markov System; Waste Time \& Cost
 \end{keywords}
 
 \end{abstract}
